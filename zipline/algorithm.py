@@ -1348,7 +1348,7 @@ class TradingAlgorithm(object):
         if asset.auto_close_date:
             day = normalize_date(self.get_datetime())
 
-            if asset.end_date < day < asset.auto_close_date:
+            if day >= min(asset.end_date, asset.auto_close_date):
                 # we are between the asset's end date and auto close date,
                 # so warn the user that they can't place an order for this
                 # asset, and return None.
