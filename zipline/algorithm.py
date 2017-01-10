@@ -1349,9 +1349,9 @@ class TradingAlgorithm(object):
             day = normalize_date(self.get_datetime())
 
             if day > min(asset.end_date, asset.auto_close_date):
-                # we are between the asset's end date and auto close date,
-                # so warn the user that they can't place an order for this
-                # asset, and return None.
+                # If we are after the asset's end date or auto close date, warn
+                # the user that they can't place an order for this asset, and
+                # return None.
                 log.warn("Cannot place order for {0}, as it has de-listed. "
                          "Any existing positions for this asset will be "
                          "liquidated on "

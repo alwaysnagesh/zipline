@@ -4294,7 +4294,7 @@ class TestOrderAfterDelist(WithTradingEnvironment, ZiplineTestCase):
     def make_equity_info(cls):
         return pd.DataFrame.from_dict(
             {
-                # Auto close date is after end date.
+                # Asset whose auto close date is after its end date.
                 1: {
                     'start_date': cls.start,
                     'end_date': cls.day_1,
@@ -4302,7 +4302,7 @@ class TestOrderAfterDelist(WithTradingEnvironment, ZiplineTestCase):
                     'symbol': "ASSET1",
                     'exchange': "TEST",
                 },
-                # Auto close date is before end date.
+                # Asset whose auto close date is before its end date.
                 2: {
                     'start_date': cls.start,
                     'end_date': cls.day_4,
