@@ -726,7 +726,7 @@ class TestMinuteBarDataFuturesCalendar(WithCreateBarData,
                     'notice_date': pd.Timestamp('2016-01-22', tz='UTC'),
                     'expiration_date': pd.Timestamp('2016-02-22', tz='UTC'),
                     'auto_close_date': pd.Timestamp('2016-01-20', tz='UTC'),
-                    'exchange': 'ICEUS',
+                    'exchange': 'CME',
                 },
             },
             orient='index',
@@ -794,6 +794,9 @@ class TestMinuteBarDataFuturesCalendar(WithCreateBarData,
         """
         auto_closing_asset = self.asset_finder.retrieve_asset(7)
 
+        # Our asset's auto close date is 2016-01-20, which means that as of the
+        # market open for the 2016-01-20 session, `can_trade` should return
+        # False.
         minutes_to_check = [
             (pd.Timestamp('2016-01-19 00:00:00', tz='UTC'), True),
             (pd.Timestamp('2016-01-19 23:00:00', tz='UTC'), True),
@@ -820,7 +823,7 @@ class TestDailyBarData(WithCreateBarData,
     )
     CREATE_BARDATA_DATA_FREQUENCY = 'daily'
 
-    sids = ASSET_FINDER_EQUITY_SIDS = set(range(1, 10))
+    sids = ASSET_FINDER_EQUITY_SIDS = set(range(1, 9))
 
     SPLIT_ASSET_SID = 3
     ILLIQUID_SPLIT_ASSET_SID = 4
@@ -828,17 +831,11 @@ class TestDailyBarData(WithCreateBarData,
     ILLIQUID_MERGER_ASSET_SID = 6
     DIVIDEND_ASSET_SID = 7
     ILLIQUID_DIVIDEND_ASSET_SID = 8
-    AUTO_CLOSING_ASSET_SID = 9
 
     @classmethod
     def make_equity_info(cls):
         frame = super(TestDailyBarData, cls).make_equity_info()
         frame.loc[[1, 2], 'end_date'] = pd.Timestamp('2016-01-08', tz='UTC')
-        auto_close_dates = pd.Series([None] * len(cls.sids), index=frame.index)
-        auto_close_dates[cls.AUTO_CLOSING_ASSET_SID] = pd.Timestamp(
-            '2016-01-06', tz='UTC',
-        )
-        frame['auto_close_date'] = auto_close_dates
         return frame
 
     @classmethod
@@ -947,9 +944,6 @@ class TestDailyBarData(WithCreateBarData,
         )
         cls.ILLIQUID_DIVIDEND_ASSET = cls.asset_finder.retrieve_asset(
             cls.ILLIQUID_DIVIDEND_ASSET_SID,
-        )
-        cls.AUTO_CLOSING_ASSET = cls.asset_finder.retrieve_asset(
-            cls.AUTO_CLOSING_ASSET_SID,
         )
         cls.ASSETS = [cls.ASSET1, cls.ASSET2]
 
