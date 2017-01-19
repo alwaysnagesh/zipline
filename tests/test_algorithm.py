@@ -4319,8 +4319,11 @@ class TestOrderAfterDelist(WithTradingEnvironment, ZiplineTestCase):
         super(TestOrderAfterDelist, cls).init_class_fixtures()
         cls.data_portal = FakeDataPortal(cls.env)
 
-    @parameterized.expand([[1], [2]])
-    def test_order_in_quiet_period(self, sid):
+    @parameterized.expand([
+        ('auto_close_before_end_date', 1),
+        ('auto_close_after_end_date', 2),
+    ])
+    def test_order_in_quiet_period(self, name, sid):
         asset = self.asset_finder.retrieve_asset(sid)
 
         algo_code = dedent("""
